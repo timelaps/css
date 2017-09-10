@@ -1,8 +1,11 @@
 module.exports = prefixed;
-var reduce = require('@timelaps/array/reduce'),
+var u, reduce = require('@timelaps/array/reduce'),
+    camelCase = require('@timelaps/string/case/camel'),
+    kebabCase = require('@timelaps/string/case/kebab'),
     knownPrefixes = require('../prefixes'),
-    indexOf = require('@timelaps/n/index/of'),
+    find = require('@timelaps/array/find'),
     add = require('@timelaps/array/add'),
+    whilst = require('@timelaps/fn/whilst'),
     // max length that a prefix can be
     maxLength = reduce(knownPrefixes, function (memo, item) {
         var length = item.length;
@@ -13,21 +16,25 @@ function prefixed(styles) {
     var next;
     return whilst(function (memo, index) {
         // get the next style key
-        return (next = styles.next());
+        next = next = styles.next();
+        return next.value !== u;
     }, function (prefixed) {
-        var __prefix = '',
-            deprefixed = next,
+        var deprefixer, __prefix = '',
+            value = next.value,
+            kebabed = kebabCase(value),
+            deprefixed = value,
             // get the prefix and deprefixed pair
-            tuple = retrievePair(next);
+            tuple = retrievePair(kebabed);
         // if nothing was found, use empty string
         __prefix = tuple[0] || __prefix;
         // if nothing was found, use original
-        deprefixed = tuple[1] || deprefixed;
+        deprefixer = tuple[1] || '';
+        deprefixed = kebabed.slice(deprefixer.length);
         // camel case to make js accessable
         deprefixed = camelCase(deprefixed);
         // access list of prefixes
         if (!(prefixedList = prefixed[deprefixed])) {
-            prefixedList = prefixed[deprefixed] = [];
+            prefixedList = prefixed[deprefixed] = [''];
         }
         // add to list if it doesn't already exist
         add(prefixedList, __prefix);
@@ -35,17 +42,12 @@ function prefixed(styles) {
     }, {});
 }
 
-function checkPrefix(next, current) {
-    var __prefix, deprefixed,
-        prefixIndex = indexOf(knownPrefixes, current);
-    // if you found a prefix
-    if (prefixIndex !== -1) {
-        // overwrite the variables above
-        // to return a full tuple
-        __prefix = knownPrefixes[prefixIndex];
-        deprefixed = next.split(__prefix).join('');
-    }
-    return [__prefix, deprefixed];
+function deprefix(kebabed, deprefixed) {}
+
+function checkPrefix(current) {
+    return find(knownPrefixes, function (prefix) {
+        return prefix === current;
+    });
 }
 
 function retrievePair(next) {
@@ -55,8 +57,13 @@ function retrievePair(next) {
     // and you have not filled out the tuple yet
     return whilst(function (memo, index) {
         return index < maxLength && next[index] && !memo[0];
-    }, function () {
-        currentCheck += next[j];
-        return checkPrefix(next, currentCheck);
+    }, function (memo, index) {
+        currentCheck += next[index];
+        var nohyphen = checkPrefix(currentCheck);
+        var prefix = nohyphen ? nohyphen : checkPrefix('-' + currentCheck);
+        if (prefix) {
+            return [prefix, currentCheck];
+        }
+        return memo;
     }, []);
 }
