@@ -5,23 +5,17 @@ var toArray = require('@timelaps/to/array');
 var forEach = require('@timelaps/n/for/each');
 var reduce = require('@timelaps/array/reduce');
 var isObject = require('@timelaps/is/object');
-var cssCase = require('../case');
-var camelCase = require('@timelaps/string/case/camel');
-var prefixedStyles = require('../prefixes');
 var reduceOwn = require('@timelaps/array/reduce/own');
 var assign = require('@timelaps/object/assign');
 var returnsFirst = require('@timelaps/returns/first');
+var group = require('../group');
 
-function convertStyleValue(key, value) {
-    if (isNaN(value)) {
-        return value;
-    } else if (timeBasedCss[key]) {
-        return value + 'ms';
-    } else if (numberBasedCss[key]) {
-        return value;
-    } else {
-        return value + 'px';
-    }
+function joinBlocks(blocks) {
+    return blocks.join('');
+}
+
+function defaultLinePrefix(counter) {
+    return counter ? ' ' : '';
 }
 
 function build(json, options_) {
@@ -30,18 +24,13 @@ function build(json, options_) {
         openBlock: returnsFirst,
         closesBlock: returnsFirst,
         joinBlocks: joinBlocks,
-        joinDefinition: joinDefinition
+        prefixes: {},
+        linePrefix: defaultLinePrefix
     }, options_);
+    var linePrefix = options.linePrefix;
+    var prefixes = options.prefixes;
+    var joinDefinition = options.joinDefinition;
     return build(json);
-
-    function joinDefinition(prefix, property, value) {
-        return prefix + property + ':' + value + ';';
-    }
-
-    function joinBlocks(blocks) {
-        // debugger;
-        return blocks.join('');
-    }
 
     function openBlock(total, selector) {
         total.push(selector.join('') + options.openBlock('{'));
@@ -52,19 +41,32 @@ function build(json, options_) {
     }
 
     function build(json, selector_, memo_, beforeAnyMore) {
-        var result, baseSelector = selector_ || [],
+        var result, originalOpensBlock,
+            baseSelector = selector_ || [],
             memo = memo_ || [],
             opensBlock = noop,
             closesBlock = noop;
         if (memo_) {
             opensBlock = createsOpenBlock(memo, baseSelector);
         }
+        originalOpensBlock = opensBlock;
         if (beforeAnyMore) {
             beforeAnyMore();
         }
-        result = reduceOwn(json, function (memo, block, key) {
-            var cameled, trimmed = key.trim();
+        var continuous = 0;
+        var setBlockOptions = {
+            prefixes: prefixes,
+            joinDefinition: joinDefinition,
+            linePrefix: function (property, value) {
+                var previous = continuous;
+                continuous += 1;
+                return linePrefix(previous, property, value);
+            }
+        };
+        result = reduceOwn(json, function (memo, block, key, chunk) {
+            var cameled, defs, lineprefix, extras, trimmed = key.trim();
             if (isObject(block)) {
+                continuous = 0;
                 forEach(toArray(trimmed, ','), function (trimmd_) {
                     trimmed = trimmd_.trim();
                     if (baseSelector.length) {
@@ -85,12 +87,8 @@ function build(json, options_) {
                     closeBlock(memo);
                 });
                 // always on the same line
-                cameled = camelCase(trimmed);
-                forEach(prefixedStyles[cameled] || [''], function (prefix) {
-                    var property = cssCase(cameled);
-                    var value = convertStyleValue(trimmed, block);
-                    memo.push(options.joinDefinition(prefix, property, value));
-                });
+                defs = group(trimmed, block, setBlockOptions);
+                memo.push.apply(memo, defs);
             }
             return memo;
         }, memo);

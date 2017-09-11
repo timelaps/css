@@ -7,6 +7,17 @@ b.describe('stringify', function () {
             '.stringify': {
                 display: 'block'
             }
-        })).toBe('.stringify{display:block;}');
+        })).toBe('.stringify{display: block;}');
+    });
+    b.it('can create prefix blocks where there otherwise may not be', function (t) {
+        t.expect(stringify({
+            '.stringify': {
+                display: 'block'
+            }
+        }, {
+            prefixes: {
+                display: ['-blah-', '']
+            }
+        })).toBe('.stringify{-blah-display: block; display: block;}');
     });
 });

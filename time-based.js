@@ -1,6 +1,6 @@
 module.exports = {
-    transitionDuration: BOOLEAN_TRUE,
-    animationDuration: BOOLEAN_TRUE,
-    transitionDelay: BOOLEAN_TRUE,
-    animationDelay: BOOLEAN_TRUE
+    transitionDuration: true,
+    animationDuration: true,
+    transitionDelay: true,
+    animationDelay: true
 };
