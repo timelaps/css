@@ -159,7 +159,7 @@ module.exports = copyCacheable(function (target_) {
             }
         },
         tokens: [{
-            match:/\,+/igm,
+            match: /\,+/igm,
             handle: function (memo, word) {
                 if (!memo.attributePart) {
                     memo.flush();
@@ -195,23 +195,30 @@ module.exports = copyCacheable(function (target_) {
             match: /\>/igm,
             handle: function (memo, word) {
                 var current = memo._current;
-                if (!memo.attributePart && memo.isEmpty()) {
-                    if (memo._root !== (current = memo._current)) {
-                        if (current.immediate) {
+                if (!memo.attributePart) {
+                    if (memo.isEmpty()) {
+                        if (memo._root !== (current = memo._current)) {
+                            if (current.immediate) {
+                                throws({
+                                    type: 'SyntaxError',
+                                    message: 'Invalid Selector ' + target
+                                });
+                            } else {
+                                current.immediate = true;
+                            }
+                        } else {
+                            // "> something"
                             throws({
                                 type: 'SyntaxError',
                                 message: 'Invalid Selector ' + target
                             });
-                        } else {
-                            current.immediate = true;
                         }
                     } else {
-                        // "> something"
-                        throws({
-                            type: 'SyntaxError',
-                            message: 'Invalid Selector ' + target
-                        });
+                        memo.createChild();
+                        memo.current().immediate = true;
                     }
+                } else {
+                    memo.append(word);
                 }
                 return memo;
             }
@@ -275,7 +282,6 @@ module.exports = copyCacheable(function (target_) {
                 return memo;
             }
         }, {
-            match: /\w+|\-+|\_/igm,
             handle: function (memo, word) {
                 var last, operator;
                 if (memo.attributePart === 1) {

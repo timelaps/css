@@ -1,8 +1,8 @@
 module.exports = definitionGroup;
 var map = require('@timelaps/n/map');
 var cssCase = require('../case');
-var propertyDefinition = require('../property-definition');
-var convertStyleValue = require('../convert-value');
+var propertyDefinition = require('../property');
+var convertStyleValue = require('../value');
 var camelCase = require('@timelaps/string/case/camel');
 var returnsEmpty = require('@timelaps/returns/empty-string');
 

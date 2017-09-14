@@ -277,7 +277,7 @@ b.describe('parseSelector', function () {
                         cased: true
                     }]
                 };
-                var c = '[parking|="angle"].only .no.parking#here.sunday';
+                var c = '[parking|="angle><"].only .no.parking#here.sunday';
                 var cParsed = {
                     tagName: null,
                     id: null,
@@ -285,7 +285,7 @@ b.describe('parseSelector', function () {
                     attributes: [{
                         name: 'parking',
                         operator: '|=',
-                        value: 'angle',
+                        value: 'angle><',
                         cased: true
                     }],
                     child: {
@@ -322,6 +322,31 @@ b.describe('parseSelector', function () {
                 var selector = [a, _b, c, d];
                 t.expect(parseSelector(selector.join(','))).toEqual([aParsed, bParsed, cParsed, dParsed]);
             });
+        });
+        b.it('parses complex ones', function (t) {
+            t.expect(parseSelector('input#identifier.classname.here[lov=e]>.child#wild,.shopping.popping.moping.stopping')).toEqual([{
+                tagName: 'input',
+                id: 'identifier',
+                class: ['classname', 'here'],
+                attributes: [{
+                    name: 'lov',
+                    operator: '=',
+                    value: 'e',
+                    cased: true
+                }],
+                child: {
+                    tagName: null,
+                    id: 'wild',
+                    class: ['child'],
+                    attributes: [],
+                    immediate: true
+                }
+            }, {
+                tagName: null,
+                id: null,
+                class: ['shopping', 'popping', 'moping', 'stopping'],
+                attributes: []
+            }]);
         });
     });
 });

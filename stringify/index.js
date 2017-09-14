@@ -68,18 +68,26 @@ function build(json, options_) {
             if (isObject(block)) {
                 continuous = 0;
                 forEach(toArray(trimmed, ','), function (trimmd_) {
-                    trimmed = trimmd_.trim();
-                    if (baseSelector.length) {
-                        if (trimmed[0] !== '&') {
-                            trimmed = ' ' + trimmed;
+                    var split, preventmod, trimmed = trimmd_.trim(),
+                        base = baseSelector;
+                    if (base.length) {
+                        split = trimmed.split('&');
+                        if (split.length > 1) {
+                            trimmed = split.join(base.join(''));
+                            base = [trimmed];
+                            preventmod = true;
                         } else {
-                            trimmed = trimmed.slice(1);
+                            trimmed = ' ' + trimmed;
                         }
                     }
-                    opensBlock = createsOpenBlock(memo, baseSelector);
-                    baseSelector.push(trimmed);
-                    build(block, baseSelector, memo, closesBlock);
-                    baseSelector.pop();
+                    opensBlock = createsOpenBlock(memo, base);
+                    if (!preventmod) {
+                        base.push(trimmed);
+                    }
+                    build(block, base, memo, closesBlock);
+                    if (!preventmod) {
+                        base.pop();
+                    }
                 });
             } else {
                 opensBlock();
