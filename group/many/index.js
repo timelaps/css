@@ -1,5 +1,5 @@
 module.exports = manyDefinitionGroups;
-var definitionGroups = require('..');
+var definitionGroups = require('../');
 var reduceOwn = require('@timelaps/array/reduce/own');
 
 function manyDefinitionGroups(keyvals, options_) {
