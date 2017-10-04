@@ -42,8 +42,6 @@ function prefixed(styles) {
     }, {});
 }
 
-function deprefix(kebabed, deprefixed) {}
-
 function checkPrefix(current) {
     return find(knownPrefixes, function (prefix) {
         return prefix === current;
