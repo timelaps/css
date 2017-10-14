@@ -6,10 +6,10 @@ function stringify(objectSelector) {
 }
 
 function stringifyBlock(block) {
-    return tagName(block.tagName) + id(block.id) + classes(block.class) + attributes(block.attributes) + child(block.child);
+    return tagName(block.tagName) + id(block.id) + classes(block.class) + attributes(block.attributes) + next(block.next);
 }
 
-function child(child) {
+function next(child) {
     return child ? (child.immediate ? '>' : '') + stringifyBlock(child) : '';
 }
 

@@ -154,7 +154,8 @@ module.exports = copyCacheable(function (target_) {
                 var child = createSelector();
                 var current = this.current();
                 memo.reset(child);
-                current.child = child;
+                child.child = true;
+                current.next = child;
                 return child;
             }
         },

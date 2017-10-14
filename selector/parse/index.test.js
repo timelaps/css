@@ -190,7 +190,8 @@ b.describe('parseSelector', function () {
                     id: null,
                     class: [],
                     attributes: [],
-                    child: {
+                    next: {
+                        child: true,
                         tagName: 'custom-child',
                         id: null,
                         class: [],
@@ -205,7 +206,8 @@ b.describe('parseSelector', function () {
                     id: null,
                     class: [],
                     attributes: [],
-                    child: {
+                    next: {
+                        child: true,
                         tagName: 'custom-child',
                         id: null,
                         class: [],
@@ -288,7 +290,8 @@ b.describe('parseSelector', function () {
                         value: 'angle><',
                         cased: true
                     }],
-                    child: {
+                    next: {
+                        child: true,
                         tagName: null,
                         id: 'here',
                         class: ['no', 'parking', 'sunday'],
@@ -306,7 +309,8 @@ b.describe('parseSelector', function () {
                         value: 'turquoise',
                         cased: true
                     }],
-                    child: {
+                    next: {
+                        child: true,
                         tagName: null,
                         id: 'wheeled',
                         class: ['four'],
@@ -334,7 +338,8 @@ b.describe('parseSelector', function () {
                     value: 'e',
                     cased: true
                 }],
-                child: {
+                next: {
+                    child: true,
                     tagName: null,
                     id: 'wild',
                     class: ['child'],
