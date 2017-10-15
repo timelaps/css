@@ -2,7 +2,7 @@ var b = require('@timelaps/batterie');
 var generator = require('@timelaps/fn/generator/array');
 var prefix = require('.');
 var data = require('./data');
-var reduceOwn = require('@timelaps/array/reduce/own');
+var reduceOwn = require('@timelaps/n/reduce/own');
 var isArray = require('@timelaps/is/array');
 b.describe('prefix', function () {
     b.expect(prefix).toBeFunction();
