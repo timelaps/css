@@ -5,7 +5,7 @@ var toArray = require('@timelaps/to/array');
 var forEach = require('@timelaps/n/for/each');
 var reduce = require('@timelaps/n/reduce');
 var isObject = require('@timelaps/is/object');
-var reduceOwn = require('@timelaps/n/reduce/own');
+var objectReduce = require('@timelaps/object/reduce');
 var assign = require('@timelaps/object/assign');
 var returnsFirst = require('@timelaps/returns/first');
 var group = require('../group');
@@ -63,7 +63,7 @@ function build(json, options_) {
                 return linePrefix(previous, property, value);
             }
         };
-        result = reduceOwn(json, function (memo, block, key, chunk) {
+        result = objectReduce(json, function (memo, block, key, chunk) {
             var cameled, defs, lineprefix, extras, trimmed = key.trim();
             if (isObject(block)) {
                 continuous = 0;

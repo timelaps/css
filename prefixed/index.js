@@ -1,5 +1,5 @@
 module.exports = prefixed;
-var u, reduce = require('@timelaps/n/reduce'),
+var u, reduce = require('@timelaps/array/reduce'),
     camelCase = require('@timelaps/string/case/camel'),
     kebabCase = require('@timelaps/string/case/kebab'),
     knownPrefixes = require('../prefixes'),

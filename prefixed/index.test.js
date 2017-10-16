@@ -2,7 +2,7 @@ var b = require('@timelaps/batterie');
 var generator = require('@timelaps/fn/generator/array');
 var prefix = require('.');
 var data = require('./data');
-var reduceOwn = require('@timelaps/n/reduce/own');
+var objectReduce = require('@timelaps/object/reduce');
 var isArray = require('@timelaps/is/array');
 b.describe('prefix', function () {
     b.expect(prefix).toBeFunction();
@@ -20,7 +20,7 @@ b.describe('prefix', function () {
     });
     b.it('will return an object with all prefixes corresponding to css values', function (t) {
         var prefixed = prefix(generator(data));
-        var result = reduceOwn(prefixed, function (memo, item) {
+        var result = objectReduce(prefixed, function (memo, item) {
             // gets coerced in to 1
             return memo + isArray(item);
         }, 0);
